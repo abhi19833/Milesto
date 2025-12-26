@@ -38,7 +38,7 @@ const TeamMemberRow = ({ member, onRemove, getRoleIcon, getRoleColor }) => (
         </span>
       </div>
       <button
-        onClick={() => onRemove(member.id)}
+        onClick={() => onRemove(member._id)}
         className="p-1 text-gray-400 hover:text-red-600 transition-colors"
       >
         <Trash2 className="h-4 w-4" />
@@ -154,7 +154,7 @@ const Team = () => {
           <div className="divide-y divide-gray-200">
             {filteredMembers.map((member) => (
               <TeamMemberRow
-                key={member.id}
+                key={member._id}
                 member={member}
                 onRemove={removeTeamMember}
                 getRoleIcon={getRoleIcon}
