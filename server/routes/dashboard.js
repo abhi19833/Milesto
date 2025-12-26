@@ -143,7 +143,7 @@ router.get("/recent-tasks", auth, async (req, res) => {
   }
 });
 
-router.get("/ai-insights", auth, async (req, res) => {
+router.get("/dashboard/ai-insights", auth, async (req, res) => {
   try {
     const projects = await Project.find({
       $or: [{ createdBy: req.user._id }, { "teamMembers.user": req.user._id }],

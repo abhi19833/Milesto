@@ -229,22 +229,24 @@ router.patch(
   }
 );
 
+import mongoose from "mongoose";
+
 router.delete("/members/:id", auth, async (req, res) => {
   try {
     const memberId = req.params.id;
 
+    if (!memberId || !mongoose.Types.ObjectId.isValid(memberId)) {
+      return res.status(400).json({ message: "Invalid member ID" });
+    }
+
     const projects = await Project.find({
-      $and: [
-        {
-          teamMembers: {
-            $elemMatch: {
-              user: req.user._id,
-              role: { $in: ["lead", "admin"] },
-            },
-          },
+      teamMembers: {
+        $elemMatch: {
+          user: req.user._id,
+          role: { $in: ["lead", "admin"] },
         },
-        { "teamMembers.user": memberId },
-      ],
+      },
+      "teamMembers.user": memberId,
     });
 
     if (!projects.length) {
@@ -256,6 +258,7 @@ router.delete("/members/:id", auth, async (req, res) => {
     await Promise.all(
       projects.map(async (project) => {
         if (project.createdBy.equals(memberId)) return null;
+
         project.teamMembers = project.teamMembers.filter(
           (m) => m.user.toString() !== memberId
         );

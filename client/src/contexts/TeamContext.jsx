@@ -81,7 +81,7 @@ export const TeamProvider = ({ children }) => {
 
   const cancelInvitation = useCallback(async (invitationId) => {
     await api.delete(`/team/invitations/${invitationId}`);
-    setInvitations((prev) => prev.filter((i) => i.id !== invitationId));
+    setInvitations((prev) => prev.filter((i) => i._id !== invitationId));
   }, []);
 
   const removeTeamMember = useCallback(async (memberId) => {
@@ -90,9 +90,10 @@ export const TeamProvider = ({ children }) => {
   }, []);
 
   const updateMemberRole = useCallback(async (memberId, role) => {
-    await api.patch(`/team/members/${memberId}/role`, { role });
+    await api.patch(`/team/members/${memberId}`, { role });
+
     setTeamMembers((prev) =>
-      prev.map((m) => (m.id === memberId ? { ...m, role } : m))
+      prev.map((m) => (m._id === memberId ? { ...m, role } : m))
     );
   }, []);
 
