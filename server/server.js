@@ -56,6 +56,10 @@ app.use("/api/documents", documentRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Server is running ✅");
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "OK",
