@@ -10,27 +10,9 @@ import {
 } from "lucide-react";
 import Cookies from "js-cookie";
 
-const getGeminiInsightsAPI = async (tasks, projects) => {
-  const token = Cookies.get("token");
-
-  if (!token) {
-    throw new Error("Authentication token not found. Please log in.");
-  }
-
-  const response = await fetch(`/api/dashboard/ai-insights?_t=${Date.now()}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch AI insight");
-  }
-
-  const data = await response.json();
-  console.log("AI Insights data from backend:", data);
-  return data.insights || [];
+const getGeminiInsightsAPI = async () => {
+  const response = await api.get("/dashboard/ai-insights");
+  return response.data.insights || [];
 };
 
 const iconMap = {
