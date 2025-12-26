@@ -97,9 +97,6 @@ export const TeamProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
     fetchTeamMembers();
     fetchInvitations();
     fetchProjects();
