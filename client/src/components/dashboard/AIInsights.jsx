@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import api from "../../api/axiosInstance";
 import {
   Brain,
   AlertTriangle,
@@ -9,6 +10,7 @@ import {
   Target,
 } from "lucide-react";
 import Cookies from "js-cookie";
+import api from "../../api/axiosInstance";
 
 const getGeminiInsightsAPI = async () => {
   const response = await api.get("/dashboard/ai-insights");
