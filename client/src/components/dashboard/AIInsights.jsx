@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import api from "../../api/axiosInstance";
 import {
   Brain,
   AlertTriangle,
@@ -11,12 +10,10 @@ import {
 } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../../api/axiosInstance";
-
 const getGeminiInsightsAPI = async () => {
   const response = await api.get("/dashboard/ai-insights");
   return response.data.insights || [];
 };
-
 const iconMap = {
   AlertTriangle,
   TrendingUp,
