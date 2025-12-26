@@ -86,7 +86,7 @@ export const TeamProvider = ({ children }) => {
 
   const removeTeamMember = useCallback(async (memberId) => {
     await api.delete(`/team/members/${memberId}`);
-    setTeamMembers((prev) => prev.filter((m) => m.id !== memberId));
+    setTeamMembers((prev) => prev.filter((m) => m._id !== memberId));
   }, []);
 
   const updateMemberRole = useCallback(async (memberId, role) => {
