@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { useTeam } from "./TeamContext";
 import api from "../api/axiosInstance";
 
 const AuthContext = createContext();
@@ -17,7 +16,6 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { triggerRefresh } = useTeam();
 
   useEffect(() => {
     const token = Cookies.get("token");

@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import toast from "react-hot-toast";
 import api from "../api/axiosInstance";
+import { useAuth } from "./AuthContext";
 
 const TeamContext = createContext();
 
@@ -17,6 +18,8 @@ export const useTeam = () => {
 };
 
 export const TeamProvider = ({ children }) => {
+  const { user, loading } = useAuth();
+
   const [projects, setProjects] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [invitations, setInvitations] = useState([]);
@@ -96,12 +99,13 @@ export const TeamProvider = ({ children }) => {
       prev.map((m) => (m._id === memberId ? { ...m, role } : m))
     );
   }, []);
-
   useEffect(() => {
-    fetchTeamMembers();
-    fetchInvitations();
-    fetchProjects();
-  }, []);
+    if (!loading && user) {
+      fetchTeamMembers();
+      fetchInvitations();
+      fetchProjects();
+    }
+  }, [loading, user]);
 
   const value = {
     projects,
