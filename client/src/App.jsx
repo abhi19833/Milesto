@@ -148,11 +148,11 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <TeamProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <TeamProvider>
           <AppContent />
-        </AuthProvider>
-      </TeamProvider>
+        </TeamProvider>
+      </AuthProvider>
     </Router>
   );
 }
