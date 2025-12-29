@@ -24,14 +24,8 @@ import dashboardRoutes from "./routes/dashboard.js";
 
 const app = express();
 
-app.use(helmet());
+app.set("trust proxy", 1);
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use("/api/", limiter);
 app.use(
   cors({
     origin: "https://milesto.vercel.app",
@@ -42,6 +36,17 @@ app.use(
 );
 
 app.options("*", cors());
+
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  skip: (req) => req.method === "OPTIONS", // 🔥 CRITICAL
+  message: "Too many requests from this IP, please try again later.",
+});
+
+app.use("/api/", limiter);
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
