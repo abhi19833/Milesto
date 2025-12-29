@@ -15,13 +15,27 @@ export const sendInviteEmail = async (
   }
 
   const html = `
-    <h2>You are invited to a project</h2>
-    <p><strong>Role:</strong> ${role || "member"}</p>
-    <p>${message || "You have been invited to join a project."}</p>
-    <a href="${inviteLink}" target="_blank">
+  <div style="font-family:Arial, sans-serif;">
+    <h3>You are invited to a project</h3>
+
+    <p>${"You have been invited to join a project."}</p>
+
+    <a
+      href="${inviteLink}"
+      target="_blank"
+      style="
+        background:#2563eb;
+        color:#fff;
+        padding:8px 14px;
+        text-decoration:none;
+        border-radius:4px;
+        display:inline-block;
+      "
+    >
       Accept Invitation
     </a>
-  `;
+  </div>
+`;
 
   return sgMail.send({
     to,
