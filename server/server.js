@@ -28,10 +28,19 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "https://milesto.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (
+        origin.startsWith("http://localhost") ||
+        origin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
