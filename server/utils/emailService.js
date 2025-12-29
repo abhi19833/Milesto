@@ -30,7 +30,6 @@ export const sendInviteEmail = async (
     html,
   });
 };
-console.log("EMAIL_FROM:", process.env.EMAIL_FROM);
 
 export const sendResetPasswordEmail = async (to, resetLink) => {
   return sgMail.send({

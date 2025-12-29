@@ -150,10 +150,10 @@ router.post(
       }/register?token=${token}`;
       const emailResult = await sendInviteEmail(
         email,
-        req.user.name,
-        project.title,
-        inviteLink,
-        true
+        `Invitation to join ${project.title}`, // subject
+        inviteLink, // invite link
+        inviteLink, // role (as you WANT)
+        "Click the link below to accept the invitation."
       );
 
       return res.json({
