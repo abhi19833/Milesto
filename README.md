@@ -45,7 +45,7 @@ https://github.com/user-attachments/assets/aaaf3ba7-0307-485f-bfb1-58c1ac3b450a
 ---
 ##  Live Project
 
-- Frontend: https://milesto-3s2acizt-abhisheks-projects-ea51422e.vercel.app
+- Frontend: https://milesto.vercel.app/
 - Backend: https://milesto.onrender.com
 
 ---
