@@ -52,7 +52,7 @@ const LandingPage = () => {
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Milesto
               <span className="block text-2xl md:text-3xl font-normal text-blue-100 mt-2">
-                AI-Powered Project Tracker
+                Project Execution & Collaboration Platform
               </span>
             </h1>
             <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -86,9 +86,10 @@ const LandingPage = () => {
                 Everything You Need for Project Success
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                From AI-powered document analysis to seamless team
-                collaboration, Milesto provides all the tools need to excel in
-                your project.
+                From intelligent progress analysis to seamless team
+                collaboration, Milesto centralizes project planning, task
+                tracking, and deadline management in a single, efficient
+                workflow.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
