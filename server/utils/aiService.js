@@ -1,21 +1,23 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import "dotenv/config";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new Groq({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 export const generateDashboardInsights = async (projects, tasks, documents) => {
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
+    // Project Summary
     const projectSummary = projects.map((p) => ({
       id: p._id,
       title: p.title,
       status: p.status,
       progress: p.progress,
-      teamMembers: p.teamMembers.length,
+      teamMembers: p.teamMembers?.length || 0,
       createdAt: p.createdAt,
     }));
 
+    // Task Summary
     const taskSummary = tasks.map((t) => ({
       id: t._id,
       title: t.title,
@@ -26,6 +28,7 @@ export const generateDashboardInsights = async (projects, tasks, documents) => {
       createdAt: t.createdAt,
     }));
 
+    // Document Summary
     const documentSummary = documents.map((d) => ({
       id: d._id,
       title: d.title,
@@ -35,53 +38,82 @@ export const generateDashboardInsights = async (projects, tasks, documents) => {
       createdAt: d.createdAt,
     }));
 
+    // Prompt
     const prompt = `
-Generate dashboard insights based on the following data.
-Return ONLY valid JSON.
-Do NOT use markdown.
-Do NOT use \`\`\`.
-Return a JSON array of objects.
+You are an AI productivity assistant.
 
-Each object must contain:
-- title
-- description
-- value
-- trend (up | down | stable)
-- type (success | warning | info)
-- priority (high | medium | low)
+Analyze the provided projects, tasks, and documents.
+
+Generate meaningful dashboard insights.
+
+IMPORTANT:
+- Return ONLY valid JSON
+- Do NOT use markdown
+- Do NOT use triple backticks
+- Return ONLY JSON array
+
+Required Format:
+
+[
+  {
+    "title": "Project Completion Rate",
+    "description": "Most projects are progressing steadily.",
+    "value": 75,
+    "trend": "up",
+    "type": "success",
+    "priority": "medium"
+  }
+]
+
+Rules:
+- trend must be: up | down | stable
+- type must be: success | warning | info
+- priority must be: high | medium | low
+- value must be number
+- Generate 4 to 6 insights
 
 Projects:
-${JSON.stringify(projectSummary, null, 2)}
+${JSON.stringify(projectSummary)}
 
 Tasks:
-${JSON.stringify(taskSummary, null, 2)}
+${JSON.stringify(taskSummary)}
 
 Documents:
-${JSON.stringify(documentSummary, null, 2)}
+${JSON.stringify(documentSummary)}
 `;
 
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = await response.text();
+    // AI Response
+    const completion = await groq.chat.completions.create({
+      model: "llama3-8b-8192",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
 
-    let insights;
+    const text = completion.choices[0]?.message?.content || "";
+
+    let insights = [];
 
     try {
-      const cleanedText = text
-        .replace(/```json/gi, "")
-        .replace(/```/g, "")
-        .trim();
+      insights = JSON.parse(text);
 
-      insights = JSON.parse(cleanedText);
+      if (!Array.isArray(insights)) {
+        insights = [insights];
+      }
     } catch (parseError) {
-      console.error("Gemini JSON parse failed:", parseError);
-      console.error("Raw Gemini output:", text);
+      console.error("Groq JSON Parse Error:", parseError);
+      console.error("Raw AI Output:", text);
 
       return [
         {
           title: "AI Insights Temporarily Unavailable",
           description:
-            "We received  unexpected response from the AI service. Please try again shortly.",
+            "Unexpected AI response received. Please try again shortly.",
           value: 0,
           trend: "down",
           type: "warning",
@@ -90,25 +122,21 @@ ${JSON.stringify(documentSummary, null, 2)}
       ];
     }
 
-    if (!Array.isArray(insights)) {
-      insights = [insights];
-    }
-
     return insights;
   } catch (error) {
-    console.error("Gemini AI error:", error);
+    console.error("Groq AI Error:", error);
 
     const isRateLimit =
       error?.status === 429 ||
       error?.message?.includes("Too Many Requests") ||
-      error?.message?.includes("quota");
+      error?.message?.includes("rate limit");
 
     return [
       {
         title: "AI Insights Temporarily Unavailable",
         description: isRateLimit
-          ? "AI insights are temporarily unavailable duee high usage. Please try again in a few moments."
-          : "We couldn’t generate AI insights  now. Please try again later.",
+          ? "AI insights are temporarily unavailable due to high usage. Please try again shortly."
+          : "Unable to generate AI insights right now. Please try again later.",
         value: 0,
         trend: "down",
         type: "warning",
